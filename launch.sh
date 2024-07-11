@@ -9,7 +9,7 @@ CACHE_TAG="bionemo2-latest"
 
 # Defaults for `.env` file
 export LOCAL_REPO_PATH=$(realpath -s $(pwd)) 
-export DOCKER_REPO_PATH=${DOCKER_REPO_PATH:=/workspace/bionemo}
+export DOCKER_REPO_PATH=${DOCKER_REPO_PATH:=/workspace/bionemo2}
 export LOCAL_RESULTS_PATH=${LOCAL_RESULTS_PATH:=${LOCAL_REPO_PATH}/results}
 export DOCKER_RESULTS_PATH=${DOCKER_RESULTS_PATH:=${DOCKER_REPO_PATH}/results}
 export LOCAL_DATA_PATH=${LOCAL_DATA_PATH:=${LOCAL_REPO_PATH}/data}
@@ -214,20 +214,17 @@ setup() {
     DOCKER_CMD="${DOCKER_CMD} -v ${LOCAL_RESULTS_PATH}:${DOCKER_RESULTS_PATH}"
     DOCKER_CMD="${DOCKER_CMD} -v ${LOCAL_DATA_PATH}:${DOCKER_DATA_PATH}"
     DOCKER_CMD="${DOCKER_CMD} -v ${LOCAL_MODELS_PATH}:${DOCKER_MODELS_PATH}"
-    echo "Mounting ${LOCAL_REPO_PATH}/bionemo2 at /workspace/bionemo2 for development"
-    DOCKER_CMD="${DOCKER_CMD} -v ${LOCAL_REPO_PATH}/bionemo2:/workspace/bionemo2 -e HOME=/workspace/bionemo2 -w /workspace/bionemo2 "
-    echo "Mounting ${LOCAL_REPO_PATH}/data at /workspace/bionemo2/data for development"
-    DOCKER_CMD="${DOCKER_CMD} -v ${LOCAL_DATA_PATH}:/workspace/bionemo2/data"
     DOCKER_CMD="${DOCKER_CMD} -v /etc/passwd:/etc/passwd:ro "
     DOCKER_CMD="${DOCKER_CMD} -v /etc/group:/etc/group:ro "
     DOCKER_CMD="${DOCKER_CMD} -v /etc/shadow:/etc/shadow:ro "
     DOCKER_CMD="${DOCKER_CMD} -u $(id -u):$(id -g) "
+    DOCKER_CMD="${DOCKER_CMD} -e HOME=/workspace/bionemo2 -w /workspace/bionemo2 "
 
     # For dev mode, mount the local code for development purpose
     # and mount .ssh dir for working with git
     if [[ $1 == "dev" ]]; then
         echo "Mounting ~/.ssh up for development"
-        DOCKER_CMD="$DOCKER_CMD -v ${HOME}/.ssh:${HOME}/.ssh:ro"
+        DOCKER_CMD="$DOCKER_CMD -v ${HOME}/.ssh:/workspace/bionemo2/.ssh:ro"
     fi
 }
 
